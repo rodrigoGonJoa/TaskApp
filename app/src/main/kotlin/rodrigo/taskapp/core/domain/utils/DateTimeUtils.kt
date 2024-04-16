@@ -1,10 +1,5 @@
-package rodrigo.taskapp.core.presentation.utils
+package rodrigo.taskapp.core.domain.utils
 
-import rodrigo.taskapp.core.domain.utils.Error
-import rodrigo.taskapp.core.domain.utils.ErrorDate
-import rodrigo.taskapp.core.domain.utils.Result
-import rodrigo.taskapp.core.domain.utils.process
-import rodrigo.taskapp.core.domain.utils.processReturn
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.time.DateTimeException
 import java.time.Instant
@@ -90,7 +85,7 @@ object DateTimeUtils {
     }
 
 
-    private fun isDateMatchSavePattern(
+    fun isDateMatchSavePattern(
         date: LocalDate,
         locale: Locale = Locale.getDefault()
     ): Result<Boolean, Error> {
@@ -114,13 +109,12 @@ object DateTimeUtils {
             } catch (e: DateTimeParseException) {
                 continue
             } catch (e: DateTimeException) {
-                val message = "Error en el formateo de la fecha."
-                logger.error(throwable = e) {message}
+                logger.error(throwable = e) {"Error en el formateo de la fecha."}
                 Result.Error(ErrorDate.DuringFormatting)
             } catch (e: Exception) {
-                val message =
+                logger.error(throwable = e) {
                     "Error desconocido al formatear la fecha: $date con patrón: ${pattern.pattern}"
-                logger.error(throwable = e) {message}
+                }
                 Result.Error(ErrorDate.UnknownFormattingWithPattern)
             }
         }
@@ -148,5 +142,9 @@ object DateTimeUtils {
     }
 
     class DateTimeMyException(override val message: String? = null): Exception(message)
+    const val dateRegex =
+        "^(?:(?:19|20)\\d\\d(?:(?:0[48]|[2468][048]|[13579][26])|(?:0[48]|[13579][26])00)|(?:19|20)(?:[2468][048]|[13579][26])|(?:0[48]|[13579][26])00)(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])$"
+    const val timeRegex = "^([01][0-9]|2[0-3])[0-5][0-9][0-5][0-9]$"
+    const val dateTimeRegex = "$dateRegex$timeRegex"
 }
 
