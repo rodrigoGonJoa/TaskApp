@@ -1,9 +1,10 @@
 package rodrigo.taskapp.core.domain.use_cases
 
+import rodrigo.taskapp.core.domain.model.BaseModel
 import rodrigo.taskapp.core.domain.utils.Error
 import rodrigo.taskapp.core.domain.utils.Result
 
-abstract class ModelVerification<MODEL, MODEL_ERROR: Error> {
+abstract class ModelVerification<MODEL: BaseModel<*>, MODEL_ERROR: Error> {
 
     abstract val verifications: List<(MODEL) -> Result<Unit, MODEL_ERROR>>
 

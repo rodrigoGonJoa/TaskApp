@@ -161,7 +161,7 @@ inline fun <DATA_IN, DATA_OUT> Result<DATA_IN, Error>.processReturn(
 }
 
 inline fun <DATA> Result<DATA, Error>.process(
-    onError: ((Result.Error<Error>) -> Unit) = {it},
+    onError: ((Result.Error<Error>) -> Unit),
     onSuccess: (Result.Success<DATA>) -> Unit
 ) {
     when (this) {

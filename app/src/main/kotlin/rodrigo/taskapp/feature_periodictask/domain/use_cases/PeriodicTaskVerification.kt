@@ -55,6 +55,4 @@ class PeriodicTaskVerification: ModelVerification<PeriodicTask, PeriodicTaskErro
         }
         return Result.Success(Unit)
     }
-
-
 }

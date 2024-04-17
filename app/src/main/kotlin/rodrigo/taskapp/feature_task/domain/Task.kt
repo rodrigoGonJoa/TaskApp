@@ -1,6 +1,7 @@
 package rodrigo.taskapp.feature_task.domain
 
 import rodrigo.taskapp.core.domain.model.BaseModel
+import rodrigo.taskapp.core.domain.utils.DateTimeUtils.nowOnDateTimeSavePattern
 import rodrigo.taskapp.feature_category.domain.Category
 import rodrigo.taskapp.feature_task.data.TaskEntity
 
@@ -27,3 +28,11 @@ data class Task(
         tCategory = category?.mapToEntity()
     )
 }
+
+fun Task.updateDateTimeFields() = copy(
+    modelCreatedAt = nowOnDateTimeSavePattern(),
+    modelModifiedAt = nowOnDateTimeSavePattern()
+)
+
+fun Task.setTaskId(taskId: Long) = copy(modelId = taskId)
+
