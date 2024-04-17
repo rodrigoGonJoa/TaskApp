@@ -11,7 +11,7 @@ data class Task(
     val content: String,
     val scheduledTime: Long? = null,
     val scheduledDate: Long? = null,
-    val isCompleted: Boolean? = null,
+    val isFinishedSuccessfully: Boolean? = null,
     val completedAt: Long? = null,
     val category: Category? = null
 ): BaseModel<TaskEntity> {
@@ -22,7 +22,7 @@ data class Task(
         tContent = content,
         tScheduledTime = scheduledTime,
         tScheduledDate = scheduledDate,
-        tIsCompleted = isCompleted,
+        tIsFinishedSuccessfully = isFinishedSuccessfully,
         tCompletedAt = completedAt,
         tCategory = category?.mapToEntity()
     )

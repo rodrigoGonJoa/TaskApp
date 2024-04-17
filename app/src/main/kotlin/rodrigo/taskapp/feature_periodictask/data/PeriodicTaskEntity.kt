@@ -9,12 +9,12 @@ data class PeriodicTaskEntity(
     override val entityModifiedAt: Long,
     override val entityCreatedAt: Long,
     val ptContent: String,
-    val ptStartedDate: Long,
+    val ptStartDate: Long,
     val ptScheduledTime: Long?,
-    val ptScheduledDate: Long?,
     val ptWeekDays: Long?,
     val ptEveryXDays: Int?,
     val ptIsPeriodEnds: Boolean,
+    val ptEndDate: Long?,
     val ptCountRepeats: Int?,
     val ptCategory: CategoryEntity?
 ): BaseEntity<PeriodicTask> {
@@ -23,12 +23,12 @@ data class PeriodicTaskEntity(
         modelCreatedAt = entityCreatedAt,
         modelModifiedAt = entityModifiedAt,
         content = ptContent,
-        startedDate = ptStartedDate,
-        scheduledDate = ptScheduledDate,
+        startDate = ptStartDate,
         scheduledTime = ptScheduledTime,
         weekDays = ptWeekDays,
         everyXDays = ptEveryXDays,
         isPeriodEnds = ptIsPeriodEnds,
+        endDate = ptEndDate,
         countRepeats = ptCountRepeats,
         category = ptCategory?.mapToModel()
     )

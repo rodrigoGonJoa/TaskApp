@@ -4,6 +4,8 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import java.time.DateTimeException
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
@@ -85,7 +87,7 @@ object DateTimeUtils {
     }
 
 
-    fun isDateMatchSavePattern(
+    private fun isDateMatchSavePattern(
         date: LocalDate,
         locale: Locale = Locale.getDefault()
     ): Result<Boolean, Error> {
@@ -122,6 +124,20 @@ object DateTimeUtils {
         return Result.Success(false)
     }
 
+    fun nowOnDateSavePattern(): Long {
+        val pattern = DateTimeFormatter.ofPattern(DateTimePattern.DATE_TOSAVE.pattern)
+        return LocalDate.now().format(pattern).toLong()
+    }
+    fun nowOnTimeSavePattern(): Long {
+        val pattern = DateTimeFormatter.ofPattern(DateTimePattern.TIME_TOSAVE.pattern)
+        return LocalTime.now().format(pattern).toLong()
+    }
+
+    fun nowOnDateTimeSavePattern(): Long {
+        val pattern = DateTimeFormatter.ofPattern(DateTimePattern.DATETIME_TOSAVE.pattern)
+        return LocalDateTime.now().format(pattern).toLong()
+    }
+
 
     sealed class DateTimePattern(val pattern: String) {
         // DateTime
@@ -142,6 +158,7 @@ object DateTimeUtils {
     }
 
     class DateTimeMyException(override val message: String? = null): Exception(message)
+
     const val dateRegex =
         "^(?:(?:19|20)\\d\\d(?:(?:0[48]|[2468][048]|[13579][26])|(?:0[48]|[13579][26])00)|(?:19|20)(?:[2468][048]|[13579][26])|(?:0[48]|[13579][26])00)(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])$"
     const val timeRegex = "^([01][0-9]|2[0-3])[0-5][0-9][0-5][0-9]$"
