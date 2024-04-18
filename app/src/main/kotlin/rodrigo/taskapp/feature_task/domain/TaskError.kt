@@ -10,4 +10,5 @@ sealed class TaskError: Error {
     data object TimeSetWithoutDate: TaskError()
     data object TaskIdNull: TaskError()
     data object NullTask: TaskError()
+    data object EmptyTaskList: TaskError()
 }

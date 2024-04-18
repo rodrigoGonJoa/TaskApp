@@ -8,7 +8,7 @@ import rodrigo.taskapp.feature_task.domain.TaskError
 import rodrigo.taskapp.feature_task.domain.TaskRepository
 import javax.inject.Inject
 
-class GetTaskUseCase @Inject constructor(
+class GetByIdTaskUseCase @Inject constructor(
     private val taskRepository: TaskRepository
 ) {
     suspend operator fun invoke(taskId: Long?): Result<Task, Error> {

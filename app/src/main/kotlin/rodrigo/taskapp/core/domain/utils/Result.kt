@@ -79,7 +79,7 @@ fun <DATA> Result<DATA, Error>.get(): Result<DATA, Error> {
  * val data: String = result.getDataOrElse("Default value")
  * ```
  */
-fun <DATA> Result<DATA, Error>.getDataOrElse(defaultValue: () -> DATA): DATA{
+fun <DATA> Result<DATA, Error>.getDataOrElse(defaultValue: () -> DATA): DATA {
     return when (this) {
         is Result.Success -> this.data
         else -> defaultValue()
@@ -160,6 +160,19 @@ inline fun <DATA_IN, DATA_OUT> Result<DATA_IN, Error>.processReturn(
     }
 }
 
+inline fun <DATA_IN, DATA_OUT> Flow<Result<DATA_IN, Error>>.processReturn(
+    crossinline onError: (Result.Error<Error>) -> Result<DATA_OUT, Error> = {it},
+    crossinline onSuccess: (Result.Success<DATA_IN>) -> Result<DATA_OUT, Error>
+): Flow<Result<DATA_OUT, Error>> {
+    return this.map {value ->
+        when (value) {
+            is Result.Error -> onError(value)
+            is Result.Success -> onSuccess(value)
+        }
+    }
+}
+
+
 inline fun <DATA> Result<DATA, Error>.process(
     onError: ((Result.Error<Error>) -> Unit),
     onSuccess: (Result.Success<DATA>) -> Unit
@@ -169,6 +182,7 @@ inline fun <DATA> Result<DATA, Error>.process(
         is Result.Success -> onSuccess(this)
     }
 }
+
 
 /**
  * Processes the flow of results asynchronously and performs corresponding actions based on its type.
