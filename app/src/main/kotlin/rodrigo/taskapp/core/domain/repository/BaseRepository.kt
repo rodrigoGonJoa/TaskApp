@@ -5,9 +5,9 @@ import rodrigo.taskapp.core.domain.utils.Error
 import rodrigo.taskapp.core.domain.utils.Result
 
 interface BaseRepository<MODEL> {
-    fun save(item: MODEL): Result<Long, Error>
-    fun update(item: MODEL): Result<Unit, Error>
-    fun delete(item: MODEL): Result<Unit, Error>
-    fun getById(itemId: Long): Result<MODEL, Error>
-    fun getAllFlow(itemId: Long): Flow<Result<List<MODEL>, Error>>
+    suspend fun save(item: MODEL): Result<Long, Error>
+    suspend fun update(item: MODEL): Result<Unit, Error>
+    suspend fun delete(item: MODEL): Result<Unit, Error>
+    suspend fun getById(itemId: Long): Result<MODEL?, Error>
+    fun getAllFlow(): Flow<Result<List<MODEL>, Error>>
 }

@@ -27,12 +27,15 @@ data class Task(
         tCompletedAt = completedAt,
         tCategory = category?.mapToEntity()
     )
+
+    fun updateDateTimeFields() = copy(
+        modelCreatedAt = nowOnDateTimeSavePattern(),
+        modelModifiedAt = nowOnDateTimeSavePattern()
+    )
+
+    fun modified() = copy(modelModifiedAt = nowOnDateTimeSavePattern())
+
+    fun setTaskId(taskId: Long) = copy(modelId = taskId)
+
 }
-
-fun Task.updateDateTimeFields() = copy(
-    modelCreatedAt = nowOnDateTimeSavePattern(),
-    modelModifiedAt = nowOnDateTimeSavePattern()
-)
-
-fun Task.setTaskId(taskId: Long) = copy(modelId = taskId)
 

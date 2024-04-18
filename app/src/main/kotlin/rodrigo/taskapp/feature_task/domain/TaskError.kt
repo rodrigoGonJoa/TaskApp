@@ -8,4 +8,6 @@ sealed class TaskError: Error {
     data object DateTimeCompletionIsNull: TaskError()
     data object CompletionFlagIsNull: TaskError()
     data object TimeSetWithoutDate: TaskError()
+    data object TaskIdNull: TaskError()
+    data object NullTask: TaskError()
 }

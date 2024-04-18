@@ -7,17 +7,16 @@ import rodrigo.taskapp.feature_task.domain.Task
 import rodrigo.taskapp.feature_task.domain.TaskRepository
 import javax.inject.Inject
 
-class SaveTaskUseCase @Inject constructor(
+class UpdateTaskUseCase @Inject constructor(
     private val taskRepository: TaskRepository,
     private val taskVerification: TaskVerification
 ) {
-    suspend operator fun invoke(task: Task): Result<Task, Error> {
+    suspend operator fun invoke(task: Task): Result<Task, Error>{
         return taskVerification.invoke(task).processReturn {
-            val updatedFieldsTask = task.updateDateTimeFields()
-            taskRepository.save(updatedFieldsTask).processReturn {result ->
-                Result.Success(updatedFieldsTask.setTaskId(result.data))
+            val modifiedTask = task.modified()
+            taskRepository.update(modifiedTask).processReturn {
+                Result.Success(modifiedTask)
             }
         }
     }
 }
-
