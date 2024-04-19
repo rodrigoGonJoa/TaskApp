@@ -16,7 +16,7 @@ object OperationMapper {
     val logger = KotlinLogging.logger("OperationMapper")
 
     suspend inline fun <IN, OUT> mapOperationToResult(
-        crossinline operation: suspend () -> IN,
+        crossinline operation: suspend () -> IN?,
         crossinline validationOverResult: (IN) -> Boolean = {false},
         crossinline isNotValid: () -> Boolean = {false},
         crossinline resultMapper: (IN) -> OUT = {Unit as OUT},
@@ -25,18 +25,21 @@ object OperationMapper {
     ): Result<OUT, Error> {
         return try {
             transactionProvider.runAsTransaction {
-                val result = operation()
+                val result = operation() ?: throw NullPointerException()
                 if (isNotValid()) throw ExceptionRoom()
                 if (validationOverResult(result)) throw ExceptionRoom()
-                Result.Success(resultMapper(result))
+                val resultMapped = resultMapper(result)
+                logger.info {"✔ Success: Getting item list"}
+                Result.Success(resultMapped)
             }
         } catch (exception: ExceptionRoom) {
-            logger.error(exception) {"Error ExceptionRoom-$error"}
+            logger.error(exception) {"✘ ExceptionRoom: $error."}
             Result.Error(error, exception)
+        } catch (exception: NullPointerException) {
+            logger.error(exception) {"✘ NullPointerException: The result was null."}
+            Result.Error(ErrorRoom.Unknown, exception)
         } catch (exception: Exception) {
-            logger.error(
-                exception
-            ) {"Error Exception-${exception.cause?.javaClass?.simpleName}"}
+            logger.error(exception) {"✘ Exception: ${exception.cause?.javaClass?.simpleName}."}
             Result.Error(ErrorRoom.Unknown, exception)
         }
     }
@@ -70,7 +73,7 @@ object OperationMapper {
 
     suspend inline fun mapAddToResult(
         transactionProvider: TransactionProvider,
-        crossinline operation: suspend () -> Long
+        crossinline operation: suspend () -> Long?
     ): Result<Long, Error> {
         return mapOperationToResult(
             operation = operation,
@@ -93,15 +96,14 @@ object OperationMapper {
     }
 
     inline fun <IN: BaseEntity<*>, OUT: BaseModel<*>> mapOperationToFlowResult(
-        crossinline operation: () -> Flow<List<IN>>,
-        crossinline dataMapper: (IN) -> OUT
+        crossinline operation: () -> Flow<List<IN>>
     ): Flow<Result<List<OUT>, Error>> {
         return operation().map {list ->
             if (list.isEmpty()) throw ExceptionRoom()
-            logger.info {"Success Getting Item List"}
-            Result.Success(list.map {data -> dataMapper(data)}) as Result<List<OUT>, Error>
+            logger.info {"✔ Success: Getting item list"}
+            Result.Success(list.map {data -> data.mapToModel()}) as Result<List<OUT>, Error>
         }.catch {exception ->
-            logger.error {"Error Getting Item List"}
+            logger.error {"✘ Error: Getting item list"}
             emit(
                 when (exception) {
                     is ExceptionRoom -> Result.Error(ErrorRoom.ErrorOnGetGroup, exception)

@@ -1,10 +1,16 @@
 package rodrigo.taskapp.feature_task.data
 
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import rodrigo.taskapp.core.data.model.BaseEntity
 import rodrigo.taskapp.feature_category.data.CategoryEntity
 import rodrigo.taskapp.feature_task.domain.Task
 
+@Entity(tableName = "task_table")
 data class TaskEntity(
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "task_id")
     override val entityId: Long?,
     override val entityModifiedAt: Long,
     override val entityCreatedAt: Long,
