@@ -46,7 +46,7 @@ sealed class Result<out DATA, out ERROR: RootError> {
  * }
  * ```
  */
-fun <DATA> Result<DATA, Error>.isSuccess(): Boolean = this is Result.Success
+fun <DATA, ERROR: Error> Result<DATA, ERROR>.isSuccess(): Boolean = this is Result.Success
 
 /**
  * Checks if the result represents an error state.
@@ -60,11 +60,11 @@ fun <DATA> Result<DATA, Error>.isSuccess(): Boolean = this is Result.Success
  * }
  * ```
  */
-fun <DATA> Result<DATA, Error>.isError(): Boolean = this is Result.Error
+fun <DATA, ERROR: Error> Result<DATA, ERROR>.isError(): Boolean = this is Result.Error
 
 // ------------------- Extension Functions: Get Result Data -------------------
 
-fun <DATA> Result<DATA, Error>.get(): Result<DATA, Error> {
+fun <DATA, ERROR: Error> Result<DATA, ERROR>.get(): Result<DATA, ERROR> {
     return when (this) {
         is Result.Success -> this
         is Result.Error -> this
@@ -80,7 +80,7 @@ fun <DATA> Result<DATA, Error>.get(): Result<DATA, Error> {
  * val data: String = result.getDataOrElse("Default value")
  * ```
  */
-fun <DATA> Result<DATA, Error>.getDataOrElse(defaultValue: () -> DATA): DATA {
+fun <DATA, ERROR: Error> Result<DATA, ERROR>.getDataOrElse(defaultValue: () -> DATA): DATA {
     return when (this) {
         is Result.Success -> this.data
         else -> defaultValue()
@@ -96,7 +96,7 @@ fun <DATA> Result<DATA, Error>.getDataOrElse(defaultValue: () -> DATA): DATA {
  * val error: RootError = result.getErrorOrElse(Error.UNKNOWN)
  * ```
  */
-fun <DATA> Result<DATA, Error>.getErrorOrElse(defaultValue: Error): Error {
+fun <DATA, ERROR: Error> Result<DATA, ERROR>.getErrorOrElse(defaultValue: ERROR): ERROR {
     return when (this) {
         is Result.Error -> this.error
         else -> defaultValue
@@ -116,7 +116,7 @@ fun <DATA> Result<DATA, Error>.getErrorOrElse(defaultValue: Error): Error {
  * }
  * ```
  */
-inline fun <DATA> Result<DATA, Error>.onError(action: (value: Error) -> Unit): Result<DATA, Error> {
+inline fun <DATA, ERROR: Error> Result<DATA, ERROR>.onError(action: (value: Error) -> Unit): Result<DATA, ERROR> {
     if (this is Result.Error) action(error)
     return this
 }
@@ -132,7 +132,7 @@ inline fun <DATA> Result<DATA, Error>.onError(action: (value: Error) -> Unit): R
  * }
  * ```
  */
-inline fun <DATA> Result<DATA, Error>.onSuccess(action: (value: DATA) -> Unit): Result<DATA, Error> {
+inline fun <DATA, ERROR: Error> Result<DATA, ERROR>.onSuccess(action: (value: DATA) -> Unit): Result<DATA, ERROR> {
     if (this is Result.Success) action(data)
     return this
 }
@@ -151,20 +151,20 @@ inline fun <DATA> Result<DATA, Error>.onSuccess(action: (value: DATA) -> Unit): 
  * )
  * ```
  */
-inline fun <DATA_IN, DATA_OUT> Result<DATA_IN, Error>.processReturn(
-    onError: (Result.Error<Error>) -> Result<DATA_OUT, Error> = {it},
-    onSuccess: (Result.Success<DATA_IN>) -> Result<DATA_OUT, Error>
-): Result<DATA_OUT, Error> {
+inline fun <DATA_IN, DATA_OUT, ERROR: Error> Result<DATA_IN, ERROR>.processReturn(
+    onError: (Result.Error<ERROR>) -> Result<DATA_OUT, ERROR> = {it},
+    onSuccess: (Result.Success<DATA_IN>) -> Result<DATA_OUT, ERROR>
+): Result<DATA_OUT, ERROR> {
     return when (this) {
         is Result.Error -> onError(this)
         is Result.Success -> onSuccess(this)
     }
 }
 
-inline fun <DATA_IN, DATA_OUT> Flow<Result<DATA_IN, Error>>.processReturn(
-    crossinline onError: (Result.Error<Error>) -> Result<DATA_OUT, Error> = {it},
-    crossinline onSuccess: (Result.Success<DATA_IN>) -> Result<DATA_OUT, Error>
-): Flow<Result<DATA_OUT, Error>> {
+inline fun <DATA_IN, DATA_OUT, ERROR: Error> Flow<Result<DATA_IN, ERROR>>.processReturn(
+    crossinline onError: (Result.Error<ERROR>) -> Result<DATA_OUT, ERROR> = {it},
+    crossinline onSuccess: (Result.Success<DATA_IN>) -> Result<DATA_OUT, ERROR>
+): Flow<Result<DATA_OUT, ERROR>> {
     return this.map {value ->
         when (value) {
             is Result.Error -> onError(value)
@@ -174,8 +174,8 @@ inline fun <DATA_IN, DATA_OUT> Flow<Result<DATA_IN, Error>>.processReturn(
 }
 
 
-inline fun <DATA> Result<DATA, Error>.process(
-    onError: (Result.Error<Error>) -> Unit,
+inline fun <DATA, ERROR: Error> Result<DATA, ERROR>.process(
+    onError: (Result.Error<ERROR>) -> Unit,
     onSuccess: (Result.Success<DATA>) -> Unit
 ) {
     when (this) {
@@ -197,8 +197,8 @@ inline fun <DATA> Result<DATA, Error>.process(
  * )
  * ```
  */
-suspend inline fun <DATA> Flow<Result<DATA, Error>>.process(
-    crossinline onError: (Result.Error<Error>) -> Unit,
+suspend inline fun <DATA, ERROR: Error> Flow<Result<DATA, ERROR>>.process(
+    crossinline onError: (Result.Error<ERROR>) -> Unit,
     crossinline onSuccess: (Result.Success<DATA>) -> Unit
 ) {
     this.collect {value ->
@@ -226,10 +226,10 @@ suspend inline fun <DATA> Flow<Result<DATA, Error>>.process(
  * )
  * ```
  */
-fun <DATA_IN, DATA_OUT> Result<DATA_IN, Error>.map(
+fun <DATA_IN, DATA_OUT, ERROR: Error> Result<DATA_IN, ERROR>.map(
     dataTransform: ((DATA_IN) -> DATA_OUT)? = null,
-    errorTransform: ((Error) -> Error)? = null
-): Result<DATA_OUT, Error> {
+    errorTransform: ((ERROR) -> ERROR)? = null
+): Result<DATA_OUT, ERROR> {
     return when (this) {
         is Result.Success -> {
             val data = dataTransform?.invoke(this.data) ?: this.data as DATA_OUT
@@ -259,10 +259,10 @@ fun <DATA_IN, DATA_OUT> Result<DATA_IN, Error>.map(
  * )
  * ```
  */
-fun <DATA_IN, DATA_OUT> Flow<Result<DATA_IN, Error>>.map(
+fun <DATA_IN, DATA_OUT, ERROR: Error> Flow<Result<DATA_IN, ERROR>>.map(
     dataTransform: ((DATA_IN) -> DATA_OUT)? = null,
-    errorTransform: ((Error) -> Error)? = null
-): Flow<Result<DATA_OUT, Error>> {
+    errorTransform: ((ERROR) -> ERROR)? = null
+): Flow<Result<DATA_OUT, ERROR>> {
     return this.map {result ->
         when (result) {
             is Result.Success -> {

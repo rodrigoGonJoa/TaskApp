@@ -18,7 +18,7 @@ class GetAllTaskUseCase @Inject constructor(
         return taskRepository.getAllFlow().processReturn {result ->
             if (result.data.isEmpty()) {
                 logger.warn {"✘ Error: the gotten list is empty."}
-                Result.Error(ErrorTask.EMPTY_TASK_LIST)
+                Result.Error(ErrorTask.Domain.EMPTY_TASK_LIST)
             }
             logger.info {"✔ Success: getting a list of task."}
             Result.Success(result.data)

@@ -1,10 +1,10 @@
 package rodrigo.taskapp.core.domain.utils.error
 
-enum class ErrorRoom: Error {
-    Unknown,
-    ErrorOnAdd,
-    ErrorOnDelete,
-    ErrorOnUpdate,
-    ErrorOnGet,
-    ErrorOnGetGroup
+sealed interface ErrorRoom: Error {
+    data object Unknown: ErrorRoom
+    data object ErrorOnAdd: ErrorRoom
+    data object ErrorOnDelete: ErrorRoom
+    data object ErrorOnUpdate: ErrorRoom
+    data object ErrorOnGet: ErrorRoom
+    data object ErrorOnGetGroup: ErrorRoom
 }

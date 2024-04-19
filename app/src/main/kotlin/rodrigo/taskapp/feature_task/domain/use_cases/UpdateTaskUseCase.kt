@@ -13,8 +13,8 @@ class UpdateTaskUseCase @Inject constructor(
     private val taskVerification: TaskVerification
 ) {
     private val logger = KotlinLogging.logger(this.javaClass.simpleName)
-    suspend operator fun invoke(task: Task): Result<Task, Error>{
-        return taskVerification.invoke(task).processReturn {
+    suspend operator fun invoke(task: Task): Result<Task, Error> {
+        return taskVerification.invoke(task).processReturn{
             logger.info {"✔ Success: Verifying."}
             val modifiedTask = task.modified()
             taskRepository.update(modifiedTask).processReturn {

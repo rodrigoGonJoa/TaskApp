@@ -20,9 +20,9 @@ object OperationMapper {
         crossinline validationOverResult: (IN) -> Boolean = {false},
         crossinline isNotValid: () -> Boolean = {false},
         crossinline resultMapper: (IN) -> OUT = {Unit as OUT},
-        error: Error,
+        error: ErrorRoom,
         transactionProvider: TransactionProvider
-    ): Result<OUT, Error> {
+    ): Result<OUT, ErrorRoom> {
         return try {
             transactionProvider.runAsTransaction {
                 val result = operation() ?: throw NullPointerException()
@@ -49,7 +49,7 @@ object OperationMapper {
         transactionProvider: TransactionProvider,
         crossinline isNotValid: () -> Boolean = {false},
         crossinline operation: suspend () -> Int,
-    ): Result<Unit, Error> {
+    ): Result<Unit, ErrorRoom> {
         return mapOperationToResult(
             operation = operation,
             error = ErrorRoom.ErrorOnDelete,
@@ -62,7 +62,7 @@ object OperationMapper {
     suspend inline fun mapUpdateToResult(
         transactionProvider: TransactionProvider,
         crossinline operation: suspend () -> Int
-    ): Result<Unit, Error> {
+    ): Result<Unit, ErrorRoom> {
         return mapOperationToResult(
             operation = operation,
             error = ErrorRoom.ErrorOnUpdate,
@@ -74,7 +74,7 @@ object OperationMapper {
     suspend inline fun mapAddToResult(
         transactionProvider: TransactionProvider,
         crossinline operation: suspend () -> Long?
-    ): Result<Long, Error> {
+    ): Result<Long, ErrorRoom> {
         return mapOperationToResult(
             operation = operation,
             error = ErrorRoom.ErrorOnAdd,
@@ -86,7 +86,7 @@ object OperationMapper {
     suspend inline fun <T: BaseEntity<*>, R: BaseModel<*>> mapGetToResult(
         transactionProvider: TransactionProvider,
         crossinline operation: suspend () -> T
-    ): Result<R, Error> {
+    ): Result<R, ErrorRoom> {
         return mapOperationToResult(
             operation = operation,
             error = ErrorRoom.ErrorOnGet,
@@ -97,11 +97,11 @@ object OperationMapper {
 
     inline fun <IN: BaseEntity<*>, OUT: BaseModel<*>> mapOperationToFlowResult(
         crossinline operation: () -> Flow<List<IN>>
-    ): Flow<Result<List<OUT>, Error>> {
+    ): Flow<Result<List<OUT>, ErrorRoom>> {
         return operation().map {list ->
             if (list.isEmpty()) throw ExceptionRoom()
             logger.info {"✔ Success: Getting item list"}
-            Result.Success(list.map {data -> data.mapToModel()}) as Result<List<OUT>, Error>
+            Result.Success(list.map {data -> data.mapToModel()}) as Result<List<OUT>, ErrorRoom>
         }.catch {exception ->
             logger.error {"✘ Error: Getting item list"}
             emit(

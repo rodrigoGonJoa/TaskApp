@@ -16,12 +16,12 @@ class GetByIdTaskUseCase @Inject constructor(
     suspend operator fun invoke(taskId: Long?): Result<Task, Error> {
         if (taskId == null) {
             logger.warn {"✘ Error: task id is null."}
-            return Result.Error(ErrorTask.TASK_ID_NULL)
+            return Result.Error(ErrorTask.Domain.TASK_ID_NULL)
         }
         return taskRepository.getById(taskId).processReturn {result ->
             if (result.data == null) {
                 logger.warn {"✘ Error: the gotten task is null."}
-                Result.Error(ErrorTask.NULL_TASK)
+                Result.Error(ErrorTask.Domain.NULL_TASK)
             }
             logger.info {"✔ Success: getting a task by id."}
             Result.Success(result.data!!)
