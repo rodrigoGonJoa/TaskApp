@@ -5,7 +5,7 @@ import rodrigo.taskapp.feature_category.data.CategoryEntity
 import rodrigo.taskapp.feature_task.domain.Task
 
 data class TaskEntity(
-    override val entityId: Long,
+    override val entityId: Long?,
     override val entityModifiedAt: Long,
     override val entityCreatedAt: Long,
     val tContent: String,

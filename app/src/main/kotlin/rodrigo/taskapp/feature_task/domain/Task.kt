@@ -6,7 +6,7 @@ import rodrigo.taskapp.feature_category.domain.Category
 import rodrigo.taskapp.feature_task.data.TaskEntity
 
 data class Task(
-    override val modelId: Long,
+    override val modelId: Long?,
     override val modelModifiedAt: Long = System.currentTimeMillis(),
     override val modelCreatedAt: Long = System.currentTimeMillis(),
     val content: String,
