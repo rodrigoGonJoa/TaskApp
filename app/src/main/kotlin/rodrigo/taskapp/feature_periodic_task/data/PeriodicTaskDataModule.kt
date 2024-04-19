@@ -1,4 +1,4 @@
-package rodrigo.taskapp.feature_periodictask.data
+package rodrigo.taskapp.feature_periodic_task.data
 
 import dagger.Module
 import dagger.Provides
@@ -6,7 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import rodrigo.taskapp.core.data.repository.TransactionProvider
 import rodrigo.taskapp.core.data.source.TaskDatabase
-import rodrigo.taskapp.feature_periodictask.domain.PeriodicTaskRepository
+import rodrigo.taskapp.feature_periodic_task.domain.PeriodicTaskRepository
 import javax.inject.Singleton
 
 @Module

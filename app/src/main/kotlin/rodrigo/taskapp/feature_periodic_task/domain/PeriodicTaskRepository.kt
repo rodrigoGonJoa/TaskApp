@@ -1,4 +1,4 @@
-package rodrigo.taskapp.feature_periodictask.domain
+package rodrigo.taskapp.feature_periodic_task.domain
 
 import rodrigo.taskapp.core.domain.repository.BaseRepository
 

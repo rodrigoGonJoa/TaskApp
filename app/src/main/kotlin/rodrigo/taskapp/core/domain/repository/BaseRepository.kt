@@ -1,7 +1,7 @@
 package rodrigo.taskapp.core.domain.repository
 
 import kotlinx.coroutines.flow.Flow
-import rodrigo.taskapp.core.domain.utils.Error
+import rodrigo.taskapp.core.domain.utils.error.Error
 import rodrigo.taskapp.core.domain.utils.Result
 
 interface BaseRepository<MODEL> {

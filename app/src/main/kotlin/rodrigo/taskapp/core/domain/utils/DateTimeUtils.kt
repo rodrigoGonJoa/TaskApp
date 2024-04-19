@@ -1,6 +1,8 @@
 package rodrigo.taskapp.core.domain.utils
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import rodrigo.taskapp.core.domain.utils.error.Error
+import rodrigo.taskapp.core.domain.utils.error.ErrorDate
 import java.time.DateTimeException
 import java.time.Instant
 import java.time.LocalDate
@@ -64,33 +66,26 @@ object DateTimeUtils {
     }
 
     fun localDateToLong(date: LocalDate, pattern: DateTimePattern): Result<Long, Error> {
-        fun isDateMatchSavePattern() = isDateMatchSavePattern(date).process(
-            onSuccess = {result -> if (!result.data) throw DateTimeMyException()})
-
-        return localDateToStringWithPattern(date, pattern).processReturn(
-            onSuccess = {process ->
-                try {
-                    isDateMatchSavePattern()
-                    logger.info {"Fecha formateada a Long: ${process.data}"}
-                    Result.Success(process.data.toLong())
-                } catch (e: NumberFormatException) {
-                    val errorMessage = "Error al convertir la fecha a Long: ${e.message}"
-                    logger.error(throwable = e) {e.message ?: errorMessage}
-                    Result.Error(ErrorDate.FormattingToLong)
-                } catch (e: DateTimeMyException) {
-                    val errorMessage = "El patrón '$pattern' no es compatible"
-                    logger.error(throwable = e) {errorMessage}
+        return localDateToStringWithPattern(date, pattern).processReturn {process ->
+            try {
+                if (isDateMatchSavePattern(date).processReturn {it}.isError()) {
                     Result.Error(ErrorDate.UnsupportedPattern)
                 }
+                logger.info {"Fecha formateada a Long: ${process.data}"}
+                Result.Success(process.data.toLong())
+            } catch (e: NumberFormatException) {
+                val errorMessage = "Error al convertir la fecha a Long: ${e.message}"
+                logger.error(throwable = e) {e.message ?: errorMessage}
+                Result.Error(ErrorDate.FormattingToLong)
             }
-        )
+        }
     }
 
 
     private fun isDateMatchSavePattern(
         date: LocalDate,
         locale: Locale = Locale.getDefault()
-    ): Result<Boolean, Error> {
+    ): Result<Unit, Error> {
         val patterns = listOf(
             DateTimePattern.DATETIME_TOSAVE,
             DateTimePattern.TIME_TOSAVE,
@@ -106,28 +101,24 @@ object DateTimeUtils {
                 val parsedDate = LocalDate.parse(formattedDate, dateFormatter)
                 if (parsedDate == date) {
                     logger.info {"La fecha coincide con el patrón: $pattern"}
-                    return Result.Success(true)
+                    return Result.Success(Unit)
                 }
             } catch (e: DateTimeParseException) {
                 continue
             } catch (e: DateTimeException) {
                 logger.error(throwable = e) {"Error en el formateo de la fecha."}
                 Result.Error(ErrorDate.DuringFormatting)
-            } catch (e: Exception) {
-                logger.error(throwable = e) {
-                    "Error desconocido al formatear la fecha: $date con patrón: ${pattern.pattern}"
-                }
-                Result.Error(ErrorDate.UnknownFormattingWithPattern)
             }
         }
         logger.warn {"La fecha no coincide con ningun patrón"}
-        return Result.Success(false)
+        return Result.Error(ErrorDate.UnknownFormattingWithPattern)
     }
 
     fun nowOnDateSavePattern(): Long {
         val pattern = DateTimeFormatter.ofPattern(DateTimePattern.DATE_TOSAVE.pattern)
         return LocalDate.now().format(pattern).toLong()
     }
+
     fun nowOnTimeSavePattern(): Long {
         val pattern = DateTimeFormatter.ofPattern(DateTimePattern.TIME_TOSAVE.pattern)
         return LocalTime.now().format(pattern).toLong()

@@ -2,6 +2,7 @@ package rodrigo.taskapp.core.domain.utils
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import rodrigo.taskapp.core.domain.utils.error.Error
 
 // https://www.youtube.com/watch?v=MiLN2vs2Oe0
 
@@ -174,7 +175,7 @@ inline fun <DATA_IN, DATA_OUT> Flow<Result<DATA_IN, Error>>.processReturn(
 
 
 inline fun <DATA> Result<DATA, Error>.process(
-    onError: ((Result.Error<Error>) -> Unit),
+    onError: (Result.Error<Error>) -> Unit,
     onSuccess: (Result.Success<DATA>) -> Unit
 ) {
     when (this) {

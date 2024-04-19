@@ -1,8 +1,8 @@
-package rodrigo.taskapp.feature_periodictask.data
+package rodrigo.taskapp.feature_periodic_task.data
 
 import rodrigo.taskapp.core.data.model.BaseEntity
 import rodrigo.taskapp.feature_category.data.CategoryEntity
-import rodrigo.taskapp.feature_periodictask.domain.PeriodicTask
+import rodrigo.taskapp.feature_periodic_task.domain.PeriodicTask
 
 data class PeriodicTaskEntity(
     override val entityId: Long,

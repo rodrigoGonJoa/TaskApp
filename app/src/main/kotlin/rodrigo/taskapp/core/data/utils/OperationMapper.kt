@@ -3,8 +3,8 @@ package rodrigo.taskapp.core.data.utils
 import rodrigo.taskapp.core.data.model.BaseEntity
 import rodrigo.taskapp.core.data.repository.TransactionProvider
 import rodrigo.taskapp.core.domain.model.BaseModel
-import rodrigo.taskapp.core.domain.utils.Error
-import rodrigo.taskapp.core.domain.utils.ErrorRoom
+import rodrigo.taskapp.core.domain.utils.error.Error
+import rodrigo.taskapp.core.domain.utils.error.ErrorRoom
 import rodrigo.taskapp.core.domain.utils.Result
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.flow.Flow

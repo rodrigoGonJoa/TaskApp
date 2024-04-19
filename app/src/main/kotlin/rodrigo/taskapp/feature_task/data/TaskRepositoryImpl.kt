@@ -7,7 +7,7 @@ import rodrigo.taskapp.core.data.utils.OperationMapper.mapDeleteToResult
 import rodrigo.taskapp.core.data.utils.OperationMapper.mapGetToResult
 import rodrigo.taskapp.core.data.utils.OperationMapper.mapOperationToFlowResult
 import rodrigo.taskapp.core.data.utils.OperationMapper.mapUpdateToResult
-import rodrigo.taskapp.core.domain.utils.Error
+import rodrigo.taskapp.core.domain.utils.error.Error
 import rodrigo.taskapp.core.domain.utils.Result
 import rodrigo.taskapp.feature_task.domain.Task
 import rodrigo.taskapp.feature_task.domain.TaskRepository
