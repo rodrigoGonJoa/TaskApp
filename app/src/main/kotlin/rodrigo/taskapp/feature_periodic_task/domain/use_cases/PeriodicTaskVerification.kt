@@ -48,8 +48,8 @@ class PeriodicTaskVerification: ModelVerification<PeriodicTask, ErrorPeriodicTas
             if(endDate < periodicTask.startDate){
                 return Result.Error(ErrorPeriodicTask.Verification.END_DATE_TOO_EARLY)
             }
-            DateTimeUtils.nowOnDateSavePattern()
-            if(endDate <= DateTimeUtils.nowOnDateSavePattern() && !periodicTask.isPeriodEnds){
+            DateTimeUtils.nowOnDateSavePattern
+            if(endDate <= DateTimeUtils.nowOnDateSavePattern && !periodicTask.isPeriodEnds){
                 return Result.Error(ErrorPeriodicTask.Verification.PERIOD_ENDED_PREVIOUSLY)
             }
         }

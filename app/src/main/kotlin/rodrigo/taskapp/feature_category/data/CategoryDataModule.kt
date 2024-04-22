@@ -15,16 +15,12 @@ object CategoryDataModule {
 
     @Provides
     @Singleton
-    fun providesCategoryDao(database: TaskDatabase): CategoryDao {
-        return database.getCategoryDao()
-    }
+    fun providesCategoryDao(database: TaskDatabase): CategoryDao = database.getCategoryDao()
 
     @Provides
     @Singleton
     fun providesCategoryRepository(
         categoryDao: CategoryDao,
         transactionProvider: TransactionProvider
-    ): CategoryRepository {
-        return CategoryRepositoryImpl(categoryDao, transactionProvider)
-    }
+    ): CategoryRepository = CategoryRepositoryImpl(categoryDao, transactionProvider)
 }

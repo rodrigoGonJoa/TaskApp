@@ -35,7 +35,7 @@ object DateTimeUtils {
         }
     }
 
-    fun localDateToStringWithPattern(
+    private fun localDateToStringWithPattern(
         date: LocalDate?,
         pattern: DateTimePattern = DateTimePattern.DATETIME_TOSAVE,
         locale: Locale = Locale.getDefault()
@@ -117,19 +117,19 @@ object DateTimeUtils {
         return Result.Error(ErrorDate.UnknownFormattingWithPattern)
     }
 
-    fun nowOnDateSavePattern(): Long {
+    val nowOnDateSavePattern: Long = run {
         val pattern = DateTimeFormatter.ofPattern(DateTimePattern.DATE_TOSAVE.pattern)
-        return LocalDate.now().format(pattern).toLong()
+        LocalDate.now().format(pattern).toLong()
     }
 
-    fun nowOnTimeSavePattern(): Long {
+    val nowOnTimeSavePattern: Long = run {
         val pattern = DateTimeFormatter.ofPattern(DateTimePattern.TIME_TOSAVE.pattern)
-        return LocalTime.now().format(pattern).toLong()
+        LocalTime.now().format(pattern).toLong()
     }
 
-    fun nowOnDateTimeSavePattern(): Long {
+    val nowOnDateTimeSavePattern: Long = run {
         val pattern = DateTimeFormatter.ofPattern(DateTimePattern.DATETIME_TOSAVE.pattern)
-        return LocalDateTime.now().format(pattern).toLong()
+        LocalDateTime.now().format(pattern).toLong()
     }
 
 

@@ -12,7 +12,7 @@ import rodrigo.taskapp.core.domain.utils.error.ErrorRoom
 
 object OperationMapper {
 
-    val logger = KotlinLogging.logger("OperationMapper")
+    val logger = KotlinLogging.logger(this.javaClass.simpleName)
 
     suspend inline fun <IN, OUT> mapOperationToResult(
         crossinline operation: suspend () -> IN?,
@@ -21,96 +21,83 @@ object OperationMapper {
         crossinline resultMapper: (IN) -> OUT = {Unit as OUT},
         error: ErrorRoom,
         transactionProvider: TransactionProvider
-    ): Result<OUT, ErrorRoom> {
-        return try {
-            transactionProvider.runAsTransaction {
-                val result = operation() ?: throw NullPointerException()
-                if (isNotValid()) throw ExceptionRoom()
-                if (validationOverResult(result)) throw ExceptionRoom()
-                val resultMapped = resultMapper(result)
-                logger.info {"✔ Success: Getting item list"}
-                Result.Success(resultMapped)
-            }
-        } catch (exception: ExceptionRoom) {
-            logger.error(exception) {"✘ ExceptionRoom: $error."}
-            Result.Error(error, exception)
-        } catch (exception: NullPointerException) {
-            logger.error(exception) {"✘ NullPointerException: The result was null."}
-            Result.Error(ErrorRoom.Unknown, exception)
-        } catch (exception: Exception) {
-            logger.error(exception) {"✘ Exception: ${exception.cause?.javaClass?.simpleName}."}
-            Result.Error(ErrorRoom.Unknown, exception)
+    ): Result<OUT, ErrorRoom> = try {
+        transactionProvider.runAsTransaction {
+            val result = operation() ?: throw NullPointerException()
+            if (isNotValid()) throw ExceptionRoom()
+            if (validationOverResult(result)) throw ExceptionRoom()
+            val resultMapped = resultMapper(result)
+            logger.info {"✔ Success: Getting item list"}
+            Result.Success(resultMapped)
         }
+    } catch (exception: ExceptionRoom) {
+        logger.error(exception) {"✘ ExceptionRoom: $error."}
+        Result.Error(error, exception)
+    } catch (exception: NullPointerException) {
+        logger.error(exception) {"✘ NullPointerException: The result was null."}
+        Result.Error(ErrorRoom.NULL, exception)
+    } catch (exception: Exception) {
+        logger.error(exception) {"✘ Exception: ${exception.cause?.javaClass?.simpleName}."}
+        Result.Error(ErrorRoom.UNKNOWN, exception)
     }
-
 
     suspend inline fun mapDeleteToResult(
         transactionProvider: TransactionProvider,
         crossinline isNotValid: () -> Boolean = {false},
         crossinline operation: suspend () -> Int,
-    ): Result<Unit, ErrorRoom> {
-        return mapOperationToResult(
-            operation = operation,
-            error = ErrorRoom.ErrorOnDelete,
-            validationOverResult = {result -> result != 1},
-            transactionProvider = transactionProvider,
-            isNotValid = isNotValid
-        )
-    }
+    ): Result<Unit, ErrorRoom> = mapOperationToResult(
+        operation = operation,
+        error = ErrorRoom.DELETE,
+        validationOverResult = {result -> result != 1},
+        transactionProvider = transactionProvider,
+        isNotValid = isNotValid
+    )
 
     suspend inline fun mapUpdateToResult(
         transactionProvider: TransactionProvider,
         crossinline operation: suspend () -> Int
-    ): Result<Unit, ErrorRoom> {
-        return mapOperationToResult(
-            operation = operation,
-            error = ErrorRoom.ErrorOnUpdate,
-            validationOverResult = {result -> result != 1},
-            transactionProvider = transactionProvider
-        )
-    }
+    ): Result<Unit, ErrorRoom> = mapOperationToResult(
+        operation = operation,
+        error = ErrorRoom.UPDATE,
+        validationOverResult = {result -> result != 1},
+        transactionProvider = transactionProvider
+    )
 
     suspend inline fun mapAddToResult(
         transactionProvider: TransactionProvider,
         crossinline operation: suspend () -> Long?
-    ): Result<Long, ErrorRoom> {
-        return mapOperationToResult(
-            operation = operation,
-            error = ErrorRoom.ErrorOnAdd,
-            transactionProvider = transactionProvider,
-            resultMapper = {it}
-        )
-    }
+    ): Result<Long, ErrorRoom> = mapOperationToResult(
+        operation = operation,
+        error = ErrorRoom.ADD,
+        transactionProvider = transactionProvider,
+        resultMapper = {it}
+    )
 
-    suspend inline fun <T: BaseEntity<*>, R: BaseModel<*>> mapGetToResult(
+    suspend inline fun <ENTITY: BaseEntity<*>, MODEL: BaseModel<*>> mapGetToResult(
         transactionProvider: TransactionProvider,
-        crossinline operation: suspend () -> T,
-    ): Result<R, ErrorRoom> {
-        return mapOperationToResult(
-            operation = operation,
-            error = ErrorRoom.ErrorOnGet,
-            resultMapper = {it.mapToModel() as R},
-            transactionProvider = transactionProvider
-        )
-    }
+        crossinline operation: suspend () -> ENTITY,
+    ): Result<MODEL, ErrorRoom> = mapOperationToResult(
+        operation = operation,
+        error = ErrorRoom.GET,
+        resultMapper = {it.mapToModel() as MODEL},
+        transactionProvider = transactionProvider
+    )
 
-    inline fun <IN: BaseEntity<*>, OUT: BaseModel<*>> mapOperationToFlowResult(
-        crossinline operation: () -> Flow<List<IN>>
-    ): Flow<Result<List<OUT>, ErrorRoom>> {
+    inline fun <ENTITY: BaseEntity<*>, MODEL: BaseModel<*>> mapOperationToFlowResult(
+        crossinline operation: () -> Flow<List<ENTITY>>
+    ): Flow<Result<List<MODEL>, ErrorRoom>> {
         return operation().map {list ->
             if (list.isEmpty()) throw ExceptionRoom()
             logger.info {"✔ Success: Getting item list"}
-            Result.Success(list.map {data -> data.mapToModel()}) as Result<List<OUT>, ErrorRoom>
+            Result.Success(list.map {data -> data.mapToModel()}) as Result<List<MODEL>, ErrorRoom>
         }.catch {exception ->
             logger.error {"✘ Error: Getting item list"}
             emit(
                 when (exception) {
-                    is ExceptionRoom -> Result.Error(ErrorRoom.ErrorOnGetGroup, exception)
-                    else -> Result.Error(ErrorRoom.Unknown, exception)
+                    is ExceptionRoom -> Result.Error(ErrorRoom.GET_GROUP, exception)
+                    else -> Result.Error(ErrorRoom.UNKNOWN, exception)
                 }
             )
         }
     }
 }
-
-

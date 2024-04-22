@@ -29,11 +29,11 @@ data class Task(
     )
 
     fun updateDateTimeFields() = copy(
-        modelCreatedAt = nowOnDateTimeSavePattern(),
-        modelModifiedAt = nowOnDateTimeSavePattern()
+        modelCreatedAt = nowOnDateTimeSavePattern,
+        modelModifiedAt = nowOnDateTimeSavePattern
     )
 
-    fun modified() = copy(modelModifiedAt = nowOnDateTimeSavePattern())
+    fun modified() = copy(modelModifiedAt = nowOnDateTimeSavePattern)
 
     fun setTaskId(taskId: Long) = copy(modelId = taskId)
 

@@ -15,16 +15,15 @@ object PeriodicTaskDataModule {
 
     @Provides
     @Singleton
-    fun providesPeriodicTaskDao(database: TaskDatabase): PeriodicTaskDao {
-        return database.getPeriodicTaskDao()
-    }
+    fun providesPeriodicTaskDao(database: TaskDatabase): PeriodicTaskDao =
+        database.getPeriodicTaskDao()
+
 
     @Provides
     @Singleton
     fun providesPeriodicTaskRepository(
         periodicTaskDao: PeriodicTaskDao,
         transactionProvider: TransactionProvider
-    ): PeriodicTaskRepository{
-        return PeriodicTaskRepositoryImpl(periodicTaskDao, transactionProvider)
-    }
+    ): PeriodicTaskRepository = PeriodicTaskRepositoryImpl(periodicTaskDao, transactionProvider)
+
 }

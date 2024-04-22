@@ -28,7 +28,5 @@ object DataModule {
 
     @Provides
     @Singleton
-    fun providesTransactionProvider(database: TaskDatabase): TransactionProvider {
-        return TransactionProvider(database)
-    }
+    fun providesTransactionProvider(database: TaskDatabase) = TransactionProvider(database)
 }

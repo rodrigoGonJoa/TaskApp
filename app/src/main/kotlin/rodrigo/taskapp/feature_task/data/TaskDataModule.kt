@@ -15,17 +15,13 @@ object TaskDataModule {
 
     @Provides
     @Singleton
-    fun providesTaskDao(taskDatabase: TaskDatabase): TaskDao {
-        return taskDatabase.getTaskDao()
-    }
+    fun providesTaskDao(taskDatabase: TaskDatabase): TaskDao = taskDatabase.getTaskDao()
 
     @Provides
     @Singleton
     fun providesTaskRepository(
         taskDao: TaskDao,
         transactionProvider: TransactionProvider
-    ): TaskRepository {
-        return TaskRepositoryImpl(taskDao, transactionProvider)
-    }
+    ): TaskRepository = TaskRepositoryImpl(taskDao, transactionProvider)
 
 }

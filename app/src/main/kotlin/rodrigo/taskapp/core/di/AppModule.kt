@@ -15,14 +15,11 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideApplication(@ApplicationContext app: Context): MainApplication {
-        return app as MainApplication
-    }
+    fun provideApplication(@ApplicationContext app: Context): MainApplication =
+        app as MainApplication
 
     @Provides
     @Singleton
-    fun provideContext(application: MainApplication): Context {
-        return application.applicationContext
-    }
+    fun provideContext(application: MainApplication): Context = application.applicationContext
 
 }

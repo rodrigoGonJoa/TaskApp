@@ -17,47 +17,42 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object TaskDomainModule {
 
+    @Provides
+    @Singleton
+    fun providesTaskVerification(
+        taskRepository: TaskRepository
+    ): TaskVerification = TaskVerification()
 
     @Provides
     @Singleton
-    fun providesTaskVerification(taskRepository: TaskRepository) = TaskVerification()
+    fun providesDeleteTaskUseCase(
+        taskRepository: TaskRepository
+    ): DeleteTaskUseCase = DeleteTaskUseCase(taskRepository)
 
     @Provides
     @Singleton
-    fun providesDeleteTaskUseCase(taskRepository: TaskRepository): DeleteTaskUseCase {
-        return DeleteTaskUseCase(taskRepository)
-    }
-
-    @Provides
-    @Singleton
-    fun providesGetByIdTaskUseCase(taskRepository: TaskRepository): GetByIdTaskUseCase {
-        return GetByIdTaskUseCase(taskRepository)
-    }
+    fun providesGetByIdTaskUseCase(
+        taskRepository: TaskRepository
+    ): GetByIdTaskUseCase = GetByIdTaskUseCase(taskRepository)
 
     @Provides
     @Singleton
     fun providesUpdateTaskUseCase(
         taskRepository: TaskRepository,
         taskVerification: TaskVerification
-    ): UpdateTaskUseCase {
-        return UpdateTaskUseCase(taskRepository, taskVerification)
-    }
+    ): UpdateTaskUseCase = UpdateTaskUseCase(taskRepository, taskVerification)
 
     @Provides
     @Singleton
     fun providesSaveTaskUseCase(
         taskRepository: TaskRepository,
         taskVerification: TaskVerification
-    ): SaveTaskUseCase {
-        return SaveTaskUseCase(taskRepository, taskVerification)
-    }
+    ): SaveTaskUseCase = SaveTaskUseCase(taskRepository, taskVerification)
 
     @Provides
     @Singleton
     fun providesGetAllTasksUseCase(
         taskRepository: TaskRepository
-    ): GetAllTaskUseCase {
-        return GetAllTaskUseCase(taskRepository)
-    }
+    ): GetAllTaskUseCase = GetAllTaskUseCase(taskRepository)
 
 }
