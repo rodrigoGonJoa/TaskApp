@@ -151,20 +151,36 @@ inline fun <DATA, ERROR: Error> Result<DATA, ERROR>.onSuccess(action: (value: DA
  * )
  * ```
  */
-inline fun <DATA_IN, DATA_OUT, ERROR: Error> Result<DATA_IN, ERROR>.processReturn(
-    onError: (Result.Error<ERROR>) -> Result<DATA_OUT, ERROR> = {it},
-    onSuccess: (Result.Success<DATA_IN>) -> Result<DATA_OUT, ERROR>
-): Result<DATA_OUT, ERROR> {
+inline fun <DATA_IN, reified DATA_OUT, ERROR_IN: Error, reified ERROR_OUT: Error> Result<DATA_IN, ERROR_IN>.processReturn(
+    crossinline onError: (Result.Error<ERROR_IN>) -> Result<DATA_OUT, ERROR_OUT> = {
+        Result.Error(it.error as ERROR_OUT)
+    },
+    crossinline onSuccess: (Result.Success<DATA_IN>) -> Result<DATA_OUT, ERROR_OUT>
+): Result<DATA_OUT, ERROR_OUT> {
     return when (this) {
         is Result.Error -> onError(this)
         is Result.Success -> onSuccess(this)
     }
 }
 
-inline fun <DATA_IN, DATA_OUT, ERROR: Error> Flow<Result<DATA_IN, ERROR>>.processReturn(
-    crossinline onError: (Result.Error<ERROR>) -> Result<DATA_OUT, ERROR> = {it},
-    crossinline onSuccess: (Result.Success<DATA_IN>) -> Result<DATA_OUT, ERROR>
-): Flow<Result<DATA_OUT, ERROR>> {
+suspend inline fun <DATA_IN, reified DATA_OUT, ERROR_IN: Error, reified ERROR_OUT: Error> Result<DATA_IN, ERROR_IN>.processReturn(
+    crossinline onError: (Result.Error<ERROR_IN>) -> Result<DATA_OUT, ERROR_OUT> = {
+        Result.Error(it.error as ERROR_OUT)
+    },
+    crossinline onSuccess: suspend (Result.Success<DATA_IN>) -> Result<DATA_OUT, ERROR_OUT>
+): Result<DATA_OUT, ERROR_OUT> {
+    return when (this) {
+        is Result.Error -> onError(this)
+        is Result.Success -> onSuccess(this)
+    }
+}
+
+inline fun <DATA_IN, DATA_OUT, ERROR_IN: Error, reified ERROR_OUT: Error> Flow<Result<DATA_IN, ERROR_IN>>.processReturn(
+    crossinline onError: (Result.Error<ERROR_IN>) -> Result<DATA_OUT, ERROR_OUT> = {
+        Result.Error(it.error as ERROR_OUT)
+    },
+    crossinline onSuccess: (Result.Success<DATA_IN>) -> Result<DATA_OUT, ERROR_OUT>
+): Flow<Result<DATA_OUT, ERROR_OUT>> {
     return this.map {value ->
         when (value) {
             is Result.Error -> onError(value)
@@ -226,54 +242,12 @@ suspend inline fun <DATA, ERROR: Error> Flow<Result<DATA, ERROR>>.process(
  * )
  * ```
  */
-fun <DATA_IN, DATA_OUT, ERROR: Error> Result<DATA_IN, ERROR>.map(
-    dataTransform: ((DATA_IN) -> DATA_OUT)? = null,
-    errorTransform: ((ERROR) -> ERROR)? = null
-): Result<DATA_OUT, ERROR> {
+inline fun <DATA_IN, reified DATA_OUT, ERROR_IN: Error, reified ERROR_OUT: Error> Result<DATA_IN, ERROR_IN>.map(
+    crossinline dataTransform: (DATA_IN) -> DATA_OUT = {it as DATA_OUT},
+    crossinline errorTransform: (ERROR_IN) -> ERROR_OUT = {it as ERROR_OUT}
+): Result<DATA_OUT, ERROR_OUT> {
     return when (this) {
-        is Result.Success -> {
-            val data = dataTransform?.invoke(this.data) ?: this.data as DATA_OUT
-            Result.Success(data)
-        }
-
-        is Result.Error -> {
-            val error = errorTransform?.invoke(this.error) ?: this.error
-            Result.Error(error)
-        }
-    }
-}
-
-
-/**
- * Returns the flow modifying the error, the success object, or both of the result content.
- * If no modification is set it will return the original flow.
- *
- * @param dataTransform Function to transform success data. If `null`, the original success data is used.
- * @param errorTransform Function to transform error. If `null`, the original error is used.
- * @return A new [Result] instance with transformed data or error.
- * ```
- * val result: Flow<Result<String, CustomError>> = ...
- * val mappedResult = result.map(
- *     dataTransform = { data -> ... },
- *     errorTransform = { error -> ... }
- * )
- * ```
- */
-fun <DATA_IN, DATA_OUT, ERROR: Error> Flow<Result<DATA_IN, ERROR>>.map(
-    dataTransform: ((DATA_IN) -> DATA_OUT)? = null,
-    errorTransform: ((ERROR) -> ERROR)? = null
-): Flow<Result<DATA_OUT, ERROR>> {
-    return this.map {result ->
-        when (result) {
-            is Result.Success -> {
-                val data = dataTransform?.invoke(result.data) ?: result.data as DATA_OUT
-                Result.Success(data)
-            }
-
-            is Result.Error -> {
-                val error = errorTransform?.invoke(result.error) ?: result.error
-                Result.Error(error)
-            }
-        }
+        is Result.Success -> Result.Success(dataTransform(this.data))
+        is Result.Error -> Result.Error(errorTransform(this.error))
     }
 }

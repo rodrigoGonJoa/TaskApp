@@ -85,7 +85,7 @@ object OperationMapper {
 
     suspend inline fun <T: BaseEntity<*>, R: BaseModel<*>> mapGetToResult(
         transactionProvider: TransactionProvider,
-        crossinline operation: suspend () -> T
+        crossinline operation: suspend () -> T,
     ): Result<R, ErrorRoom> {
         return mapOperationToResult(
             operation = operation,

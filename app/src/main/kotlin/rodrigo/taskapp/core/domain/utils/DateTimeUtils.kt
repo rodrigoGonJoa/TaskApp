@@ -66,17 +66,20 @@ object DateTimeUtils {
     }
 
     fun localDateToLong(date: LocalDate, pattern: DateTimePattern): Result<Long, Error> {
-        return localDateToStringWithPattern(date, pattern).processReturn {process ->
-            try {
-                if (isDateMatchSavePattern(date).processReturn {it}.isError()) {
-                    Result.Error(ErrorDate.UnsupportedPattern)
+        return when (val result = localDateToStringWithPattern(date, pattern)) {
+            is Result.Error -> result
+            is Result.Success -> {
+                try {
+                    if (isDateMatchSavePattern(date).isError()) {
+                        Result.Error(ErrorDate.UnsupportedPattern)
+                    }
+                    logger.info {"Fecha formateada a Long: ${result.data}"}
+                    Result.Success(result.data.toLong())
+                } catch (e: NumberFormatException) {
+                    val errorMessage = "Error al convertir la fecha a Long: ${e.message}"
+                    logger.error(throwable = e) {e.message ?: errorMessage}
+                    Result.Error(ErrorDate.FormattingToLong)
                 }
-                logger.info {"Fecha formateada a Long: ${process.data}"}
-                Result.Success(process.data.toLong())
-            } catch (e: NumberFormatException) {
-                val errorMessage = "Error al convertir la fecha a Long: ${e.message}"
-                logger.error(throwable = e) {e.message ?: errorMessage}
-                Result.Error(ErrorDate.FormattingToLong)
             }
         }
     }
