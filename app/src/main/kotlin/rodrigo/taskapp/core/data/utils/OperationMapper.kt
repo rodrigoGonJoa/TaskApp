@@ -1,15 +1,14 @@
 package rodrigo.taskapp.core.data.utils
 
-import rodrigo.taskapp.core.data.model.BaseEntity
-import rodrigo.taskapp.core.data.repository.TransactionProvider
-import rodrigo.taskapp.core.domain.model.BaseModel
-import rodrigo.taskapp.core.domain.utils.error.Error
-import rodrigo.taskapp.core.domain.utils.error.ErrorRoom
-import rodrigo.taskapp.core.domain.utils.Result
 import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import rodrigo.taskapp.core.data.model.BaseEntity
+import rodrigo.taskapp.core.data.repository.TransactionProvider
+import rodrigo.taskapp.core.domain.model.BaseModel
+import rodrigo.taskapp.core.domain.utils.Result
+import rodrigo.taskapp.core.domain.utils.error.ErrorRoom
 
 object OperationMapper {
 

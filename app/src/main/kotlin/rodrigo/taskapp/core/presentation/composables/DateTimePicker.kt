@@ -20,8 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import rodrigo.taskapp.core.presentation.composables.CustomDatePickerDialog
-import rodrigo.taskapp.core.presentation.composables.CustomTimePickerDialog
 
 @Composable
 fun DateTimePicker(

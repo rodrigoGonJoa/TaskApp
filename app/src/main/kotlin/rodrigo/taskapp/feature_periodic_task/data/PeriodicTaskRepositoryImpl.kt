@@ -2,8 +2,8 @@ package rodrigo.taskapp.feature_periodic_task.data
 
 import kotlinx.coroutines.flow.Flow
 import rodrigo.taskapp.core.data.repository.TransactionProvider
-import rodrigo.taskapp.core.domain.utils.error.Error
 import rodrigo.taskapp.core.domain.utils.Result
+import rodrigo.taskapp.core.domain.utils.error.Error
 import rodrigo.taskapp.feature_periodic_task.domain.PeriodicTask
 import rodrigo.taskapp.feature_periodic_task.domain.PeriodicTaskRepository
 import javax.inject.Inject

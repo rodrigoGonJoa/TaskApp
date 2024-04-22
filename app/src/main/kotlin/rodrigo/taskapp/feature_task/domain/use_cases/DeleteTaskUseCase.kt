@@ -1,8 +1,8 @@
 package rodrigo.taskapp.feature_task.domain.use_cases
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import rodrigo.taskapp.core.domain.utils.error.Error
 import rodrigo.taskapp.core.domain.utils.Result
+import rodrigo.taskapp.core.domain.utils.error.Error
 import rodrigo.taskapp.core.domain.utils.error.ErrorTask
 import rodrigo.taskapp.feature_task.domain.Task
 import rodrigo.taskapp.feature_task.domain.TaskRepository
