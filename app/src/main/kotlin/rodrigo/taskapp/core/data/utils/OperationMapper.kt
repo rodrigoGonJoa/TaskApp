@@ -8,7 +8,7 @@ import rodrigo.taskapp.core.data.model.BaseEntity
 import rodrigo.taskapp.core.data.repository.TransactionProvider
 import rodrigo.taskapp.core.domain.model.BaseModel
 import rodrigo.taskapp.core.domain.utils.Result
-import rodrigo.taskapp.core.domain.utils.error.ErrorRoom
+import rodrigo.taskapp.core.domain.utils.error.RoomError
 
 object OperationMapper {
 
@@ -19,9 +19,9 @@ object OperationMapper {
         crossinline validationOverResult: (IN) -> Boolean = {false},
         crossinline isNotValid: () -> Boolean = {false},
         crossinline resultMapper: (IN) -> OUT = {Unit as OUT},
-        error: ErrorRoom,
+        error: RoomError,
         transactionProvider: TransactionProvider
-    ): Result<OUT, ErrorRoom> = try {
+    ): Result<OUT, RoomError> = try {
         transactionProvider.runAsTransaction {
             val result = operation() ?: throw NullPointerException()
             if (isNotValid()) throw ExceptionRoom()
@@ -35,19 +35,19 @@ object OperationMapper {
         Result.Error(error, exception)
     } catch (exception: NullPointerException) {
         logger.error(exception) {"✘ NullPointerException: The result was null."}
-        Result.Error(ErrorRoom.NULL, exception)
+        Result.Error(RoomError.NULL, exception)
     } catch (exception: Exception) {
         logger.error(exception) {"✘ Exception: ${exception.cause?.javaClass?.simpleName}."}
-        Result.Error(ErrorRoom.UNKNOWN, exception)
+        Result.Error(RoomError.UNKNOWN, exception)
     }
 
     suspend inline fun mapDeleteToResult(
         transactionProvider: TransactionProvider,
         crossinline isNotValid: () -> Boolean = {false},
         crossinline operation: suspend () -> Int,
-    ): Result<Unit, ErrorRoom> = mapOperationToResult(
+    ): Result<Unit, RoomError> = mapOperationToResult(
         operation = operation,
-        error = ErrorRoom.DELETE,
+        error = RoomError.DELETE,
         validationOverResult = {result -> result != 1},
         transactionProvider = transactionProvider,
         isNotValid = isNotValid
@@ -56,9 +56,9 @@ object OperationMapper {
     suspend inline fun mapUpdateToResult(
         transactionProvider: TransactionProvider,
         crossinline operation: suspend () -> Int
-    ): Result<Unit, ErrorRoom> = mapOperationToResult(
+    ): Result<Unit, RoomError> = mapOperationToResult(
         operation = operation,
-        error = ErrorRoom.UPDATE,
+        error = RoomError.UPDATE,
         validationOverResult = {result -> result != 1},
         transactionProvider = transactionProvider
     )
@@ -66,9 +66,9 @@ object OperationMapper {
     suspend inline fun mapAddToResult(
         transactionProvider: TransactionProvider,
         crossinline operation: suspend () -> Long?
-    ): Result<Long, ErrorRoom> = mapOperationToResult(
+    ): Result<Long, RoomError> = mapOperationToResult(
         operation = operation,
-        error = ErrorRoom.ADD,
+        error = RoomError.ADD,
         transactionProvider = transactionProvider,
         resultMapper = {it}
     )
@@ -76,26 +76,26 @@ object OperationMapper {
     suspend inline fun <ENTITY: BaseEntity<*>, MODEL: BaseModel<*>> mapGetToResult(
         transactionProvider: TransactionProvider,
         crossinline operation: suspend () -> ENTITY,
-    ): Result<MODEL, ErrorRoom> = mapOperationToResult(
+    ): Result<MODEL, RoomError> = mapOperationToResult(
         operation = operation,
-        error = ErrorRoom.GET,
+        error = RoomError.GET,
         resultMapper = {it.mapToModel() as MODEL},
         transactionProvider = transactionProvider
     )
 
     inline fun <ENTITY: BaseEntity<*>, MODEL: BaseModel<*>> mapOperationToFlowResult(
         crossinline operation: () -> Flow<List<ENTITY>>
-    ): Flow<Result<List<MODEL>, ErrorRoom>> {
+    ): Flow<Result<List<MODEL>, RoomError>> {
         return operation().map {list ->
             if (list.isEmpty()) throw ExceptionRoom()
             logger.info {"✔ Success: Getting item list"}
-            Result.Success(list.map {data -> data.mapToModel()}) as Result<List<MODEL>, ErrorRoom>
+            Result.Success(list.map {data -> data.mapToModel()}) as Result<List<MODEL>, RoomError>
         }.catch {exception ->
             logger.error {"✘ Error: Getting item list"}
             emit(
                 when (exception) {
-                    is ExceptionRoom -> Result.Error(ErrorRoom.GET_GROUP, exception)
-                    else -> Result.Error(ErrorRoom.UNKNOWN, exception)
+                    is ExceptionRoom -> Result.Error(RoomError.GET_GROUP, exception)
+                    else -> Result.Error(RoomError.UNKNOWN, exception)
                 }
             )
         }

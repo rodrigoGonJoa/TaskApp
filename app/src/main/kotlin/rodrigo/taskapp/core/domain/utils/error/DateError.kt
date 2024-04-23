@@ -1,6 +1,6 @@
 package rodrigo.taskapp.core.domain.utils.error
 
-enum class ErrorDate: Error {
+enum class DateError: Error {
     NullLocalDate,
     MillisToLocalDate,
     InvalidPattern,

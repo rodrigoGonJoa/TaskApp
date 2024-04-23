@@ -2,7 +2,7 @@ package rodrigo.taskapp.feature_category.domain.use_cases
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import rodrigo.taskapp.core.domain.utils.Result
-import rodrigo.taskapp.core.domain.utils.error.ErrorCategory
+import rodrigo.taskapp.core.domain.utils.error.CategoryError
 import rodrigo.taskapp.feature_category.domain.Category
 import rodrigo.taskapp.feature_category.domain.CategoryRepository
 import javax.inject.Inject
@@ -12,7 +12,7 @@ class SaveCategoryUseCase @Inject constructor(
     private val categoryVerification: CategoryVerification
 ) {
     private val logger = KotlinLogging.logger(this.javaClass.simpleName)
-    suspend operator fun invoke(category: Category): Result<Category, ErrorCategory>{
+    suspend operator fun invoke(category: Category): Result<Category, CategoryError>{
         return when (val resultVerification = categoryVerification.invoke(category)) {
             is Result.Error -> {
                 logger.error {"✘ Error: Category verification."}
@@ -24,12 +24,12 @@ class SaveCategoryUseCase @Inject constructor(
             }
         }
     }
-    private suspend fun saveCategory(category: Category): Result<Category, ErrorCategory> {
+    private suspend fun saveCategory(category: Category): Result<Category, CategoryError> {
         val updatedCategory = category.updateDateTimeFields()
         return when (val resultDatabase = categoryRepository.save(updatedCategory)) {
             is Result.Error -> {
                 logger.error {"✘ Error: Save category."}
-                Result.Error(ErrorCategory.Database(resultDatabase.error))
+                Result.Error(CategoryError.Database(resultDatabase.error))
             }
             is Result.Success -> {
                 logger.info {"✔ Success: Save category."}

@@ -1,7 +1,7 @@
 package rodrigo.taskapp.core.domain.utils.error
 
-sealed interface ErrorPeriodicTask: Error {
-    enum class Verification: ErrorPeriodicTask {
+sealed interface PeriodicTaskError: Error {
+    enum class Verification: PeriodicTaskError {
         CONTENT_TOO_LONG,
         EMPTY_CONTENT,
         PERIOD_NOT_SET,

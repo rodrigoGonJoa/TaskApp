@@ -2,7 +2,7 @@ package rodrigo.taskapp.core.domain.utils
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import rodrigo.taskapp.core.domain.utils.error.Error
-import rodrigo.taskapp.core.domain.utils.error.ErrorDate
+import rodrigo.taskapp.core.domain.utils.error.DateError
 import java.time.DateTimeException
 import java.time.Instant
 import java.time.LocalDate
@@ -19,7 +19,7 @@ object DateTimeUtils {
     fun millisToLocalDate(dateInMillis: Long?): Result<LocalDate, Error> {
         if (dateInMillis == null) {
             logger.error {"La marca de tiempo es nula. Se devuelve una fecha nula."}
-            return Result.Error(ErrorDate.NullLocalDate)
+            return Result.Error(DateError.NullLocalDate)
         }
         return try {
             val localDate = Instant.ofEpochMilli(dateInMillis)
@@ -31,7 +31,7 @@ object DateTimeUtils {
             logger.error(
                 throwable = e
             ) {"Error al convertir milisegundos a LocalDate: ${e.message}"}
-            Result.Error(ErrorDate.MillisToLocalDate)
+            Result.Error(DateError.MillisToLocalDate)
         }
     }
 
@@ -42,7 +42,7 @@ object DateTimeUtils {
     ): Result<String, Error> {
         if (date == null) {
             logger.error {"La marca de tiempo es nula. Se devuelve una fecha nula."}
-            return Result.Error(ErrorDate.NullLocalDate)
+            return Result.Error(DateError.NullLocalDate)
         }
         return try {
             val dateFormatter = DateTimeFormatter.ofPattern(pattern.pattern, locale)
@@ -52,16 +52,16 @@ object DateTimeUtils {
         } catch (e: IllegalArgumentException) {
             val message = "El patrón de formato de fecha '$pattern' es inválido."
             logger.error(throwable = e) {message}
-            Result.Error(ErrorDate.InvalidPattern)
+            Result.Error(DateError.InvalidPattern)
         } catch (e: DateTimeException) {
             val message = "Error en el formateo de la fecha."
             logger.error(throwable = e) {message}
-            Result.Error(ErrorDate.DuringFormatting)
+            Result.Error(DateError.DuringFormatting)
         } catch (e: Exception) {
             val message =
                 "Error desconocido al formatear la fecha: $date con patrón: ${pattern.pattern}"
             logger.error(throwable = e) {message}
-            Result.Error(ErrorDate.UnknownFormattingWithPattern)
+            Result.Error(DateError.UnknownFormattingWithPattern)
         }
     }
 
@@ -71,14 +71,14 @@ object DateTimeUtils {
             is Result.Success -> {
                 try {
                     if (isDateMatchSavePattern(date).isError()) {
-                        Result.Error(ErrorDate.UnsupportedPattern)
+                        Result.Error(DateError.UnsupportedPattern)
                     }
                     logger.info {"Fecha formateada a Long: ${result.data}"}
                     Result.Success(result.data.toLong())
                 } catch (e: NumberFormatException) {
                     val errorMessage = "Error al convertir la fecha a Long: ${e.message}"
                     logger.error(throwable = e) {e.message ?: errorMessage}
-                    Result.Error(ErrorDate.FormattingToLong)
+                    Result.Error(DateError.FormattingToLong)
                 }
             }
         }
@@ -110,11 +110,11 @@ object DateTimeUtils {
                 continue
             } catch (e: DateTimeException) {
                 logger.error(throwable = e) {"Error en el formateo de la fecha."}
-                Result.Error(ErrorDate.DuringFormatting)
+                Result.Error(DateError.DuringFormatting)
             }
         }
         logger.warn {"La fecha no coincide con ningun patrón"}
-        return Result.Error(ErrorDate.UnknownFormattingWithPattern)
+        return Result.Error(DateError.UnknownFormattingWithPattern)
     }
 
     val nowOnDateSavePattern: Long = run {
