@@ -15,11 +15,11 @@ class SaveTaskUseCase @Inject constructor(
     suspend operator fun invoke(task: Task): Result<Task, ErrorTask> {
         return when (val resultVerification = taskVerification.invoke(task)) {
             is Result.Error -> {
-                logger.error {"✘ Error: On task verification."}
+                logger.error {"✘ Error: Task verification."}
                 Result.Error(resultVerification.error)
             }
             is Result.Success -> {
-                logger.info {"✔ Success: On task verification."}
+                logger.info {"✔ Success: Task verification."}
                 saveTask(task)
             }
         }
@@ -28,12 +28,12 @@ class SaveTaskUseCase @Inject constructor(
         val updatedTask = task.updateDateTimeFields()
         return when (val resultDatabase = taskRepository.save(updatedTask)) {
             is Result.Error -> {
-                logger.error {"✘ Error: On save task."}
+                logger.error {"✘ Error: Save task."}
                 Result.Error(ErrorTask.Database(resultDatabase.error))
             }
             is Result.Success -> {
-                logger.info {"✔ Success: On save task."}
-                Result.Success(updatedTask.setTaskId(resultDatabase.data))
+                logger.info {"✔ Success: Save task."}
+                Result.Success(updatedTask.setId(resultDatabase.data))
             }
         }
     }

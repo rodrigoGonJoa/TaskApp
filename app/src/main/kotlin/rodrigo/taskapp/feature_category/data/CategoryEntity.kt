@@ -4,7 +4,7 @@ import rodrigo.taskapp.core.data.model.BaseEntity
 import rodrigo.taskapp.feature_category.domain.Category
 
 data class CategoryEntity(
-    override val entityId: Long,
+    override val entityId: Long?,
     override val entityModifiedAt: Long,
     override val entityCreatedAt: Long,
     val cTitle: String,

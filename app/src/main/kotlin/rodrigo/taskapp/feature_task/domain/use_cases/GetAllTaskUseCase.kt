@@ -17,15 +17,15 @@ class GetAllTaskUseCase @Inject constructor(
         return taskRepository.getAllFlow().map {flowResult ->
             when (flowResult) {
                 is Result.Error -> {
-                    logger.error {"✘ Error: On getting a list of task."}
+                    logger.error {"✘ Error: Getting a task list."}
                     Result.Error(ErrorTask.Database(flowResult.error))
                 }
                 is Result.Success -> {
                     if (flowResult.data.isEmpty()) {
-                        logger.warn {"✘ Error: the gotten list is empty."}
+                        logger.warn {"✘ Error: The gotten list is empty."}
                         Result.Error(ErrorTask.Domain.EMPTY_TASK_LIST)
                     }
-                    logger.info {"✔ Success: On getting a list of task."}
+                    logger.info {"✔ Success: Getting a task list."}
                     Result.Success(flowResult.data)
                 }
             }

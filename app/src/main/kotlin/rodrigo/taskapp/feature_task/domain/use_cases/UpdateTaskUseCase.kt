@@ -15,24 +15,24 @@ class UpdateTaskUseCase @Inject constructor(
     suspend operator fun invoke(task: Task): Result<Task, ErrorTask> {
         return when (val resultVerification = taskVerification.invoke(task)) {
             is Result.Error -> {
-                logger.error {"✘ Error: On task verification."}
+                logger.error {"✘ Error: Task verification."}
                 Result.Error(resultVerification.error)
             }
             is Result.Success -> {
-                logger.info {"✔ Success: On task verification."}
+                logger.info {"✔ Success: Task verification."}
                 updateTask(task)
             }
         }
     }
     private suspend fun updateTask(task: Task): Result<Task, ErrorTask> {
-        val updatedTask = task.updateDateTimeFields()
+        val updatedTask = task.modified()
         return when (val resultDatabase = taskRepository.update(updatedTask)) {
             is Result.Error -> {
-                logger.error {"✘ Error: On update task."}
+                logger.error {"✘ Error: Update task."}
                 Result.Error(ErrorTask.Database(resultDatabase.error))
             }
             is Result.Success -> {
-                logger.info {"✔ Success: On update task."}
+                logger.info {"✔ Success: Update task."}
                 Result.Success(updatedTask)
             }
         }

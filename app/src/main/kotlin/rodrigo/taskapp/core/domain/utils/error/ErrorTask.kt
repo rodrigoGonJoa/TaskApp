@@ -1,7 +1,7 @@
 package rodrigo.taskapp.core.domain.utils.error
 
 sealed interface ErrorTask: Error {
-    enum class Domain: ErrorTask { TASK_ID_NULL, NULL_TASK, EMPTY_TASK_LIST }
+    enum class Domain: ErrorTask { NULL_TASK_ID, NULL_TASK, EMPTY_TASK_LIST }
     data class Database(val errorRoom: ErrorRoom): ErrorTask
     enum class Verification: ErrorTask {
         CONTENT_TOO_LONG,

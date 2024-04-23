@@ -19,9 +19,7 @@ object TaskDomainModule {
 
     @Provides
     @Singleton
-    fun providesTaskVerification(
-        taskRepository: TaskRepository
-    ): TaskVerification = TaskVerification()
+    fun providesTaskVerification(): TaskVerification = TaskVerification()
 
     @Provides
     @Singleton
@@ -51,7 +49,7 @@ object TaskDomainModule {
 
     @Provides
     @Singleton
-    fun providesGetAllTasksUseCase(
+    fun providesGetAllTaskUseCase(
         taskRepository: TaskRepository
     ): GetAllTaskUseCase = GetAllTaskUseCase(taskRepository)
 

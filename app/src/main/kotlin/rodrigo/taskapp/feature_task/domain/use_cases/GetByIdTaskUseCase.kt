@@ -13,12 +13,12 @@ class GetByIdTaskUseCase @Inject constructor(
     private val logger = KotlinLogging.logger(this.javaClass.simpleName)
     suspend operator fun invoke(taskId: Long?): Result<Task, ErrorTask> {
         if (taskId == null) {
-            logger.warn {"✘ Error: task id is null."}
-            return Result.Error(ErrorTask.Domain.TASK_ID_NULL)
+            logger.warn {"✘ Error: The task id is null."}
+            return Result.Error(ErrorTask.Domain.NULL_TASK_ID)
         }
         return when (val result = taskRepository.getById(taskId)) {
             is Result.Error -> {
-                logger.error {"✘ Error: On getting a task by id."}
+                logger.error {"✘ Error: Getting a task by id."}
                 Result.Error(ErrorTask.Database(result.error))
             }
             is Result.Success -> {
@@ -26,7 +26,7 @@ class GetByIdTaskUseCase @Inject constructor(
                     logger.warn {"✘ Error: The gotten task is null."}
                     Result.Error(ErrorTask.Domain.NULL_TASK)
                 }
-                logger.info {"✔ Success: On getting a task by id."}
+                logger.info {"✔ Success: Getting a task by id."}
                 Result.Success(result.data!!)
             }
         }

@@ -6,7 +6,7 @@ import rodrigo.taskapp.feature_category.domain.Category
 import rodrigo.taskapp.feature_task.data.TaskEntity
 
 data class Task(
-    override val modelId: Long?,
+    override val modelId: Long? = null,
     override val modelModifiedAt: Long = System.currentTimeMillis(),
     override val modelCreatedAt: Long = System.currentTimeMillis(),
     val content: String,
@@ -27,15 +27,10 @@ data class Task(
         tCompletedAt = completedAt,
         tCategory = category?.mapToEntity()
     )
-
-    fun updateDateTimeFields() = copy(
+    override fun updateDateTimeFields() = copy(
         modelCreatedAt = nowOnDateTimeSavePattern,
         modelModifiedAt = nowOnDateTimeSavePattern
     )
-
-    fun modified() = copy(modelModifiedAt = nowOnDateTimeSavePattern)
-
-    fun setTaskId(taskId: Long) = copy(modelId = taskId)
-
+    override fun modified() = copy(modelModifiedAt = nowOnDateTimeSavePattern)
+    override fun setId(modelId: Long) = copy(modelId = modelId)
 }
-
