@@ -13,20 +13,20 @@ class GetByIdCategoryUseCase @Inject constructor(
     private val logger = KotlinLogging.logger(this.javaClass.simpleName)
     suspend operator fun invoke(categoryId: Long?): Result<Category, CategoryError> {
         if (categoryId == null) {
-            logger.warn {"✘ Error: The task id is null."}
+            logger.warn {"✘ Error: The category id is null."}
             return Result.Error(CategoryError.Domain.NULL_CATEGORY_ID)
         }
         return when (val result = categoryRepository.getById(categoryId)) {
             is Result.Error -> {
-                logger.error {"✘ Error: Getting a task by id."}
+                logger.error {"✘ Error: Getting a category by id."}
                 Result.Error(CategoryError.Database(result.error))
             }
             is Result.Success -> {
                 if (result.data == null) {
-                    logger.warn {"✘ Error: The gotten task is null."}
+                    logger.warn {"✘ Error: The gotten category is null."}
                     Result.Error(CategoryError.Domain.NULL_CATEGORY)
                 }
-                logger.info {"✔ Success: Getting a task by id."}
+                logger.info {"✔ Success: Getting a category by id."}
                 Result.Success(result.data!!)
             }
         }

@@ -14,21 +14,20 @@ data class Category(
     val iconId: Long? = null
 ): BaseModel<CategoryEntity> {
     override fun mapToEntity() = CategoryEntity(
-        entityId = modelId,
-        entityCreatedAt = modelCreatedAt,
-        entityModifiedAt = modelModifiedAt,
+        cId = modelId,
+        cCreatedAt = modelCreatedAt,
+        cModifiedAt = modelModifiedAt,
         cTitle = title,
         cColor = color,
         cIconId = iconId
     )
+
     override fun updateDateTimeFields() = copy(
         modelCreatedAt = DateTimeUtils.nowOnDateTimeSavePattern,
         modelModifiedAt = DateTimeUtils.nowOnDateTimeSavePattern
     )
-    override fun modified() = copy(modelModifiedAt = DateTimeUtils.nowOnDateTimeSavePattern)
-    override fun setId(modelId: Long) = copy(modelId = modelId)
-}
 
-object CategoryData {
-    const val MAX_TITLE_LENGTH = 50
+    override fun modified() = copy(modelModifiedAt = DateTimeUtils.nowOnDateTimeSavePattern)
+    override fun setId(modelId: Long?) = copy(modelId = modelId)
 }
+object CategoryData { const val MAX_TITLE_LENGTH = 50 }

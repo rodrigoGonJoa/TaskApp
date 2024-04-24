@@ -5,9 +5,9 @@ import rodrigo.taskapp.feature_category.data.CategoryEntity
 import rodrigo.taskapp.feature_periodic_task.domain.PeriodicTask
 
 data class PeriodicTaskEntity(
-    override val entityId: Long,
-    override val entityModifiedAt: Long,
-    override val entityCreatedAt: Long,
+    val ptId: Long?,
+    val ptModifiedAt: Long,
+    val ptCreatedAt: Long,
     val ptContent: String,
     val ptStartDate: Long,
     val ptScheduledTime: Long?,
@@ -19,9 +19,9 @@ data class PeriodicTaskEntity(
     val ptCategory: CategoryEntity?
 ): BaseEntity<PeriodicTask> {
     override fun mapToModel() = PeriodicTask(
-        modelId = entityId,
-        modelCreatedAt = entityCreatedAt,
-        modelModifiedAt = entityModifiedAt,
+        modelId = ptId,
+        modelCreatedAt = ptCreatedAt,
+        modelModifiedAt = ptModifiedAt,
         content = ptContent,
         startDate = ptStartDate,
         scheduledTime = ptScheduledTime,

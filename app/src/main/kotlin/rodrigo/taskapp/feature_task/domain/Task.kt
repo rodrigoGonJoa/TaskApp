@@ -3,6 +3,7 @@ package rodrigo.taskapp.feature_task.domain
 import rodrigo.taskapp.core.domain.model.BaseModel
 import rodrigo.taskapp.core.domain.utils.DateTimeUtils.nowOnDateTimeSavePattern
 import rodrigo.taskapp.feature_category.domain.Category
+import rodrigo.taskapp.feature_task.data.TaskAndCategory
 import rodrigo.taskapp.feature_task.data.TaskEntity
 
 data class Task(
@@ -15,22 +16,28 @@ data class Task(
     val isFinishedSuccessfully: Boolean? = null,
     val completedAt: Long? = null,
     val category: Category? = null
-): BaseModel<TaskEntity> {
-    override fun mapToEntity() = TaskEntity(
-        entityId = modelId,
-        entityModifiedAt = modelModifiedAt,
-        entityCreatedAt = modelCreatedAt,
-        tContent = content,
-        tScheduledTime = scheduledTime,
-        tScheduledDate = scheduledDate,
-        tIsFinishedSuccessfully = isFinishedSuccessfully,
-        tCompletedAt = completedAt,
+): BaseModel<TaskAndCategory> {
+    override fun mapToEntity() = TaskAndCategory(
+        taskEntity = TaskEntity(
+            tId = modelId,
+            tModifiedAt = modelModifiedAt,
+            tCreatedAt = modelCreatedAt,
+            tContent = content,
+            tScheduledTime = scheduledTime,
+            tScheduledDate = scheduledDate,
+            tIsFinishedSuccessfully = isFinishedSuccessfully,
+            tCompletedAt = completedAt,
+            tCategoryId = category?.modelId
+        ),
         tCategory = category?.mapToEntity()
     )
+
     override fun updateDateTimeFields() = copy(
         modelCreatedAt = nowOnDateTimeSavePattern,
         modelModifiedAt = nowOnDateTimeSavePattern
     )
+
     override fun modified() = copy(modelModifiedAt = nowOnDateTimeSavePattern)
-    override fun setId(modelId: Long) = copy(modelId = modelId)
+    override fun setId(modelId: Long?) = copy(modelId = modelId)
+    fun setCategory(category: Category?) = copy(category = category)
 }

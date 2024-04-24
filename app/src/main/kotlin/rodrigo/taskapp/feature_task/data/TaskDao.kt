@@ -11,17 +11,17 @@ import kotlinx.coroutines.flow.Flow
 interface TaskDao {
 
     @Insert
-    fun saveTask(task: TaskEntity): Long?
+    fun saveTask(task: TaskAndCategory): Long?
 
     @Update
-    fun updateTask(task: TaskEntity): Int
+    fun updateTask(task: TaskAndCategory): Int
 
     @Delete
-    fun deleteTask(task: TaskEntity): Int
+    fun deleteTask(task: TaskAndCategory): Int
 
-    @Query("SELECT * FROM task_table WHERE task_id == :taskId")
-    fun getTaskById(taskId: Long): TaskEntity
+    @Query("SELECT * FROM task_table WHERE t_id == :taskId")
+    fun getTaskById(taskId: Long): TaskAndCategory
 
     @Query("SELECT * FROM task_table")
-    fun getAllTasks(): Flow<List<TaskEntity>>
+    fun getAllTasks(): Flow<List<TaskAndCategory>>
 }

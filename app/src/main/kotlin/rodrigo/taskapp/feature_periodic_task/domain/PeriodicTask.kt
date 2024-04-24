@@ -1,11 +1,12 @@
 package rodrigo.taskapp.feature_periodic_task.domain
 
 import rodrigo.taskapp.core.domain.model.BaseModel
+import rodrigo.taskapp.core.domain.utils.DateTimeUtils
 import rodrigo.taskapp.feature_category.domain.Category
 import rodrigo.taskapp.feature_periodic_task.data.PeriodicTaskEntity
 
 data class PeriodicTask(
-    override val modelId: Long,
+    override val modelId: Long? = null,
     override val modelModifiedAt: Long = System.currentTimeMillis(),
     override val modelCreatedAt: Long = System.currentTimeMillis(),
     val content: String,
@@ -19,9 +20,9 @@ data class PeriodicTask(
     val category: Category? = null
 ): BaseModel<PeriodicTaskEntity> {
     override fun mapToEntity() = PeriodicTaskEntity(
-        entityId = modelId,
-        entityCreatedAt = modelCreatedAt,
-        entityModifiedAt = modelModifiedAt,
+        ptId = modelId,
+        ptCreatedAt = modelCreatedAt,
+        ptModifiedAt = modelModifiedAt,
         ptContent = content,
         ptStartDate = startDate,
         ptScheduledTime = scheduledTime,
@@ -32,6 +33,14 @@ data class PeriodicTask(
         ptCountRepeats = countRepeats,
         ptCategory = category?.mapToEntity()
     )
+
+    override fun updateDateTimeFields() = copy(
+        modelCreatedAt = DateTimeUtils.nowOnDateTimeSavePattern,
+        modelModifiedAt = DateTimeUtils.nowOnDateTimeSavePattern
+    )
+
+    override fun modified() = copy(modelModifiedAt = DateTimeUtils.nowOnDateTimeSavePattern)
+    override fun setId(modelId: Long?) = copy(modelId = modelId)
 }
 
 enum class EnumWeekDays(val value: Int) {
@@ -45,6 +54,6 @@ enum class EnumWeekDays(val value: Int) {
 }
 
 enum class WeekDaysSet(val value: Int) {
-    WORKINGDAYS(12345),
+    WORKING_DAYS(12345),
     WEEKEND(67)
 }

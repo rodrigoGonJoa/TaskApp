@@ -1,8 +1,8 @@
 package rodrigo.taskapp.core.domain.utils
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import rodrigo.taskapp.core.domain.utils.error.Error
 import rodrigo.taskapp.core.domain.utils.error.DateError
+import rodrigo.taskapp.core.domain.utils.error.Error
 import java.time.DateTimeException
 import java.time.Instant
 import java.time.LocalDate
