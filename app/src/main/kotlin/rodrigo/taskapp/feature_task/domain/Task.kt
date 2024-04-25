@@ -40,4 +40,6 @@ data class Task(
     override fun modified() = copy(modelModifiedAt = nowOnDateTimeSavePattern)
     override fun setId(modelId: Long?) = copy(modelId = modelId)
     fun setCategory(category: Category?) = copy(category = category)
+    fun setCategoryId(categoryId: Long?) = setCategory(this.category?.copy(modelId = categoryId))
+
 }

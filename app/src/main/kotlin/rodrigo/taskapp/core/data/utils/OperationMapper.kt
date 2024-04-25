@@ -27,7 +27,7 @@ object OperationMapper {
             if (isNotValid()) throw ExceptionRoom()
             if (validationOverResult(result)) throw ExceptionRoom()
             val resultMapped = resultMapper(result)
-            logger.info {"✔ Success: Getting item list"}
+            logger.info {"✔ Success: Operation execution."}
             Result.Success(resultMapped)
         }
     } catch (exception: ExceptionRoom) {
@@ -73,9 +73,18 @@ object OperationMapper {
         resultMapper = {it}
     )
 
+    suspend inline fun<ENTITY: BaseEntity<*>, MODEL: BaseModel<*>> mapAddToResult1(
+        transactionProvider: TransactionProvider,
+        crossinline operation: suspend () -> ENTITY?
+    ): Result<MODEL, RoomError> = mapOperationToResult(
+        operation = operation,
+        error = RoomError.ADD,
+        transactionProvider = transactionProvider
+    )
+
     suspend inline fun <ENTITY: BaseEntity<*>, MODEL: BaseModel<*>> mapGetToResult(
         transactionProvider: TransactionProvider,
-        crossinline operation: suspend () -> ENTITY,
+        crossinline operation: suspend () -> ENTITY?,
     ): Result<MODEL, RoomError> = mapOperationToResult(
         operation = operation,
         error = RoomError.GET,
