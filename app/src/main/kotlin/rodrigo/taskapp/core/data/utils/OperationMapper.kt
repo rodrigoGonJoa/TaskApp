@@ -24,13 +24,13 @@ object OperationMapper {
     ): Result<OUT, RoomError> = try {
         transactionProvider.runAsTransaction {
             val result = operation() ?: throw NullPointerException()
-            if (isNotValid()) throw ExceptionRoom()
-            if (validationOverResult(result)) throw ExceptionRoom()
+            if (isNotValid()) throw RoomException()
+            if (validationOverResult(result)) throw RoomException()
             val resultMapped = resultMapper(result)
             logger.info {"✔ Success: Operation execution."}
             Result.Success(resultMapped)
         }
-    } catch (exception: ExceptionRoom) {
+    } catch (exception: RoomException) {
         logger.error(exception) {"✘ ExceptionRoom: $error."}
         Result.Error(error, exception)
     } catch (exception: NullPointerException) {
@@ -96,14 +96,14 @@ object OperationMapper {
         crossinline operation: () -> Flow<List<ENTITY>>
     ): Flow<Result<List<MODEL>, RoomError>> {
         return operation().map {list ->
-            if (list.isEmpty()) throw ExceptionRoom()
+            if (list.isEmpty()) throw RoomException()
             logger.info {"✔ Success: Getting item list"}
             Result.Success(list.map {data -> data.mapToModel()}) as Result<List<MODEL>, RoomError>
         }.catch {exception ->
             logger.error {"✘ Error: Getting item list"}
             emit(
                 when (exception) {
-                    is ExceptionRoom -> Result.Error(RoomError.GET_GROUP, exception)
+                    is RoomException -> Result.Error(RoomError.GET_GROUP, exception)
                     else -> Result.Error(RoomError.UNKNOWN, exception)
                 }
             )

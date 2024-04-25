@@ -1,3 +1,3 @@
 package rodrigo.taskapp.core.data.utils
 
-class ExceptionRoom: Exception()
+class RoomException: Exception()
