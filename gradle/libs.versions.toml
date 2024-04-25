@@ -2,7 +2,7 @@
 # Project
 versionCode = "1"
 versionName = "1.0"
-androidGradlePlugin = "8.3.1"
+androidGradlePlugin = "8.3.2"
 kotlin = "1.9.23"
 androidSdkCompile = "34"
 androidSdkTarget = "34"
@@ -18,21 +18,21 @@ logging = "6.0.3"
 slf4jSimple = "2.0.12"
 
 # AndroidX
-androidxCore = "1.12.0"
+androidxCore = "1.13.0"
 androidxLifecycle = "2.7.0"
 androidxNavigation = "2.7.7"
 
 # Compose
 androidxComposeCompiler = "1.5.11"
-androidxComposeBom = "2024.03.00"
-foundation = "1.7.0-alpha05"
+androidxComposeBom = "2024.04.01"
+foundation = "1.7.0-alpha07"
 
 # Dynamic Feature don't recognize BOM
-androidxActivity = "1.8.2"
+androidxActivity = "1.9.0"
 
 # Hilt
 androidxHilt = "1.2.0"
-hilt = "2.51"
+hilt = "2.51.1"
 
 # Room
 androidxRoom = "2.6.1"
